@@ -24,35 +24,38 @@ def apply_layer(y_in, w, b, activation): # a function that applies a layer
         return((z>0)*z)
 
 def apply_net(y_in):
-    global w1, b1, w2, b2, w3, b3
+    global w1, b1, w2, b2, w12, b12
 
-    print(y_in)
-    y1 = apply_layer(y_in, w1, b1, 'reLU')
-    print(y1)
-    y2 = apply_layer(y1, w2, b2, 'jump')
-    print(y2)
+    #print(y_in)
+    y1 = apply_layer(y_in, w1, b1, 'jump')
+    y12 = apply_layer(y1, w12, b12, 'jump')
+    #print(y1)
+    y2 = apply_layer(y12, w2, b2, 'jump')
+    #print(y2)
     return(y2)
 
-
-
 # From input layer to hidden layer:
-w1 = np.array([[1,0],[0,-1]]) # random weights: N1xN0
-b1 = np.array([0,0]) # biases: N1 vector
-
+w1 = np.array([[1,0],[0,1],[1,0],[0,-1]]) # random weights: N1xN0
+b1 = np.array([0,0,0,0]) # biases: N1 vector
 
 # From hidden layer to output layer:
-w2 = np.array([[1,-1]]) 
-b2 = np.array([0]) 
+
+w12 = np.array([[1,1,0,0],[0,0,1,-1]]) 
+b12 = np.array([0,0]) 
+
+# From hidden layer to output layer:
+w2 = np.array([1,-1]) 
+b2 = np.array([0])
 
 ### Note: this is NOT the most efficient way to do this! (but simple) ###
-M = 4 # will create picture of size MxM
+M = 1000 # will create picture of size MxM
 y_out = np.zeros([M,M]) # array MxM, to hold the result
 
 for j1 in range(M):
     for j2 in range(M):
         value0 = (float(j1)/M) - 0.5
         value1 = (float(j2)/M) - 0.5
-        y_out[j1,j2] = apply_net([value0,value1])[0]
+        y_out[j1,j2] = apply_net([value1,value0])[0]
 
 plt.imshow(y_out, origin='lower', extent=(-0.5,0.5,-0.5,0.5))
 plt.colorbar()
